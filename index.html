@@ -82,7 +82,7 @@ th{font-size:11px;color:#8a96b0;text-transform:uppercase;letter-spacing:0.5px}
     <!-- Login Screen -->
     <div id="loginContainer" class="hidden">
       <h2>Welcome back</h2>
-      <p class="sub">Sign in to your secure digital library.</p>
+      <p class="sub">Sign in to SchoolVault.</p>
       <div class="field"><label>Name</label><input id="loginName" placeholder="Your name"></div>
       <div class="field"><label>Password</label><input id="loginPass" type="password" placeholder="Your password"></div>
       <button class="primary" id="signIn" style="width:100%; margin-top:10px;" type="button">Sign In</button>
@@ -289,4 +289,4 @@ $('createUser').onclick=async()=>{
   switchAuth('login');
 };
 
-$('logout').onclick=()=>{me=null;$('app').classList.add('hidden');$('auth').classList.remove('hidden');switchAuth('login');$('loginPass').v
+$('logout').onclick=()=>{me=null;$('app').classList.add('hidden');$('auth').classList.remove('hidden');switchAuth('login');$('loginPass').value='';$('login
