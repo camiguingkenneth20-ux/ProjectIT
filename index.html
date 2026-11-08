@@ -80,7 +80,7 @@ th{font-size:11px;color:#8a96b0;text-transform:uppercase;letter-spacing:0.5px}
     </div>
 
     <!-- Login Screen -->
-    <div id="loginContainer" class="hidden">
+    <div id="loginContainer">
       <h2>Welcome back</h2>
       <p class="sub">Sign in to SchoolVault.</p>
       <div class="field"><label>Name</label><input id="loginName" placeholder="Your name"></div>
@@ -144,9 +144,33 @@ th{font-size:11px;color:#8a96b0;text-transform:uppercase;letter-spacing:0.5px}
 const DB='SVaultDB',STORE='vault';let db,me,items=[];
 const $=id=>document.getElementById(id);
 
-function openDB(){return new Promise((ok,no)=>{let r=indexedDB.open(DB,1);r.onupgradeneeded=()=>r.result.createObjectStore(STORE);r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)})}
-function get(k){return new Promise((ok,no)=>{let r=db.transaction(STORE).objectStore(STORE).get(k);r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)})}
-function put(k,v){return new Promise((ok,no)=>{let t=db.transaction(STORE,'readwrite');t.objectStore(STORE).put(v,k);t.oncomplete=ok;t.onerror=()=>no(t.error)})}
+function openDB(){
+  return new Promise((ok,no)=>{
+    let r=indexedDB.open(DB,1);
+    r.onupgradeneeded=()=>r.result.createObjectStore(STORE);
+    r.onsuccess=()=>ok(r.result);
+    r.onerror=()=>no(r.error);
+  });
+}
+
+function get(k){
+  return new Promise((ok,no)=>{
+    if(!db) return no('DB not ready');
+    let r=db.transaction(STORE).objectStore(STORE).get(k);
+    r.onsuccess=()=>ok(r.result);
+    r.onerror=()=>no(r.error);
+  });
+}
+
+function put(k,v){
+  return new Promise((ok,no)=>{
+    if(!db) return no('DB not ready');
+    let t=db.transaction(STORE,'readwrite');
+    t.objectStore(STORE).put(v,k);
+    t.oncomplete=ok;
+    t.onerror=()=>no(t.error);
+  });
+}
 
 function switchAuth(target) {
   if (target === 'register') {
@@ -281,7 +305,6 @@ $('createUser').onclick=async()=>{
   if(p.length<8){$('regError').textContent='Password must be at least 8 characters.';return}
   if(a.some(x=>x.name.toLowerCase()===n.toLowerCase())){$('regError').textContent='That name is already registered.';return}
   
-  // The VERY FIRST account created on this fresh repo automatically becomes admin!
   let role = a.length === 0 ? 'admin' : 'student';
   a.push({id:crypto.randomUUID(),name:n,birth:b,role:role,pass:p,key:k,last:null,banned:false});
   await put('accounts',a);
@@ -289,4 +312,4 @@ $('createUser').onclick=async()=>{
   switchAuth('login');
 };
 
-$('logout').onclick=()=>{me=null;$('app').classList.add('hidden');$('auth').classList.remove('hidden');switchAuth('login');$('loginPass').value='';$('login
+$('logout').onclick=()=>{me=null;$('app').classList.add('hidden');$('auth').classList.remove
