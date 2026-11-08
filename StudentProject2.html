@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SchoolVault</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f3f5fb;color:#1d2940;font-family:Arial,sans-serif}.hidden{display:none!important}button{cursor:pointer;border:0;border-radius:10px;padding:11px 14px;font-weight:700}.primary{background:#536dfe;color:white}.soft{background:#eef1ff;color:#536dfe}.danger{background:#fff0f1;color:#c43d4c}.warning{background:#fff8e6;color:#b27b00}input,select{width:100%;padding:12px;border:1px solid #dfe4ef;border-radius:10px;font-size:14px}.auth{min-height:100vh;display:grid;place-items:center;padding:18px}.panel{background:white;padding:27px;border-radius:20px;width:min(440px,100%);box-shadow:0 15px 45px #1b2a4a18}.brand{font-size:21px;font-weight:800;margin-bottom:24px}.logo{display:inline-grid;place-items:center;background:#536dfe;color:white;border-radius:12px;width:38px;height:38px;margin-right:8px}.field{margin:13px 0}.field label{display:block;font-size:12px;font-weight:bold;margin-bottom:7px}.sub,.muted,.note{color:#7c879b;font-size:13px;line-height:1.5}.error{color:#c43d4c;font-size:12px;min-height:17px}.app{display:flex;min-height:100vh}.side{width:230px;background:white;border-right:1px solid #e8ebf2;padding:23px 16px}.nav button{display:block;width:100%;text-align:left;background:none;color:#69758b;margin:5px 0}.nav button.active{background:#eef1ff;color:#536dfe}.main{padding:28px;flex:1;min-width:0}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:24px}.top h1{margin:0 0 6px;font-size:25px}.row{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.stat,.box,.item{background:white;border:1px solid #e8ebf2;border-radius:14px;padding:17px}.stat strong{display:block;font-size:26px;margin-top:8px}.toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:23px 0 12px}.toolbar input{max-width:250px}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(205px,1fr));gap:12px}.item{overflow-wrap:anywhere}.item .pic{font-size:32px;cursor:pointer}.item h3{font-size:14px;cursor:pointer}.item small{color:#7c879b}.actions{display:flex;gap:6px;margin-top:13px}.actions button{flex:1;font-size:11px;padding:9px 5px}.empty{text-align:center;padding:35px;background:white;border:1px dashed #dce2ee;border-radius:14px;color:#7c879b}.tablewrap{overflow:auto}table{width:100%;border-collapse:collapse;font-size:13px}td,th{text-align:left;padding:12px;border-bottom:1px solid #edf0f5}th{font-size:11px;color:#7c879b}.modalback{display:none;position:fixed;inset:0;background:#111b32aa;place-items:center;padding:15px;z-index:3}.modalback.show{display:grid}.modal{background:white;padding:22px;border-radius:16px;width:min(780px,100%);max-height:90vh;overflow:auto}.badge{color:#536dfe;background:#eef1ff;padding:5px 8px;border-radius:20px;font-size:10px;font-weight:bold}.badge.banned{color:#c43d4c;background:#fff0f1}
+@media(max-width:720px){.app{display:block}.side{width:100%;padding:13px;border:0;border-bottom:1px solid #e8ebf2}.brand{margin-bottom:8px}.nav{display:flex;overflow:auto}.nav button{white-space:nowrap;width:auto;margin:0;padding:9px}.main{padding:18px 13px}.stats{gap:7px}.stat{padding:12px}.stat strong{font-size:21px}.toolbar{align-items:flex-start;flex-direction:column}.toolbar input{max-width:none}}
+</style></head><body>
+<div class="auth" id="auth"><div class="panel"><div class="brand"><span class="logo">S</span>SchoolVault</div>
+
+<!-- Register Screen (Default First View) -->
+<section id="register"><h2>Create account</h2><p class="sub">Register a new user account.</p>
+<div class="field"><label>Full name</label><input id="newName" placeholder="Your name"></div>
+<div class="field"><label>Password</label><input id="newPass" type="password" placeholder="Create a password (8+ characters)"></div>
+<div class="field"><label>Birth date</label><input id="newBirth" type="date"></div>
+<div class="field"><label>Recovery answer key</label><input id="newKey" type="password" placeholder="Create recovery key"></div>
+<button class="primary" id="createUser" style="width:100%">Create Account</button><div class="error" id="regError"></div>
+<p style="text-align:center; margin-top: 15px;"><button class="soft" id="backLogin">Already have an account? Sign in</button></p>
+</section>
+
+<!-- Login Screen -->
+<section id="login" class="hidden"><h2>Welcome back</h2><p class="sub">Sign in to your school library.</p>
+<div class="field"><label>Name</label><input id="loginName" placeholder="Your name"></div>
+<div class="field"><label>Password</label><input id="loginPass" type="password" placeholder="Your password"></div>
+<button class="primary" id="signIn" style="width:100%">Sign In</button><div class="error" id="loginError"></div>
+<p style="text-align:center; margin-top: 15px;"><button class="soft" id="toRegister">Create another account</button></p>
+</section>
+
+</div></div>
+<div class="app hidden" id="app"><aside class="side"><div class="brand"><span class="logo">S</span>SchoolVault</div><nav class="nav"><button class="active" data-page="dashboard">▦ Dashboard</button><button data-page="files">▤ School Files</button><button data-page="links">↗ Saved Links</button><button data-page="admin" id="adminTab" class="hidden">♙ Admin Accounts</button></nav></aside>
+<main class="main"><header class="top"><div><h1 id="pageTitle">Dashboard</h1><div class="muted">Signed in as <b id="who"></b> · <span id="role"></span></div></div><div class="row"><button class="primary" id="add">＋ Add Item</button><button class="soft" id="logout">Log out</button></div></header>
+<section id="dashboard"><div class="stats"><div class="stat"><span class="muted">Total items</span><strong id="total">0</strong></div><div class="stat"><span class="muted">Files</span><strong id="filesCount">0</strong></div><div class="stat"><span class="muted">Links</span><strong id="linksCount">0</strong></div></div><div class="toolbar"><h2>My recent items</h2><input id="searchDash" placeholder="Search library..."></div><div class="grid" id="dashGrid"></div></section>
+<section id="files" class="hidden"><div class="toolbar"><h2>School files</h2><input id="searchFiles" placeholder="Search files..."></div><div class="grid" id="fileGrid"></div></section>
+<section id="links" class="hidden"><div class="toolbar"><h2>Saved links</h2><input id="searchLinks" placeholder="Search links..."></div><div class="grid" id="linkGrid"></div></section>
+<section id="admin" class="hidden"><div class="box"><h2>Registered accounts</h2><p class="muted">Admin can see account names, roles, passwords, last login timestamps, and manage account statuses.</p><div class="tablewrap"><table><thead><tr><th>ACCOUNT NAME</th><th>ROLE</th><th>PASSWORD</th><th>LAST LOGIN</th><th>ACTIONS</th></tr></thead><tbody id="accountsTable"></tbody></table></div></div></section>
+</main></div>
+<div class="modalback" id="addModal"><div class="modal" style="width:min(440px,100%)"><h2>Add to library</h2><div class="field"><label>Type</label><select id="type"><option value="file">Upload file</option><option value="link">Save link</option></select></div><div class="field" id="fileField"><label>Choose file</label><input id="upload" type="file"></div><div class="field hidden" id="titleField"><label>Link title</label><input id="linkTitle" placeholder="Example: Math reviewer"></div><div class="field hidden" id="urlField"><label>Website URL</label><input id="url" type="url" placeholder="https://example.com"></div><div class="field"><label>Subject / folder</label><select id="folder"><option>Other</option><option>CC</option><option>Programming</option><option>Math</option><option>English</option><option>Science</option><option>Entrepreneurship</option><option>PATHFIT</option></select></div><div class="row" style="justify-content:flex-end"><button class="soft" id="cancel">Cancel</button><button class="primary" id="save">Save</button></div></div></div>
+<div class="modalback" id="previewModal"><div class="modal"><div class="row" style="justify-content:space-between"><h2 id="previewName">File preview</h2><button class="soft" id="closePreview">Close</button></div><div id="previewBody"></div></div></div>
+<script>
+const DB='SVaultDB',STORE='vault';let db,me,items=[];
+const $=id=>document.getElementById(id);
+function openDB(){return new Promise((ok,no)=>{let r=indexedDB.open(DB,1);r.onupgradeneeded=()=>r.result.createObjectStore(STORE);r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)})}
+function get(k){return new Promise((ok,no)=>{let r=db.transaction(STORE).objectStore(STORE).get(k);r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)})}
+function put(k,v){return new Promise((ok,no)=>{let t=db.transaction(STORE,'readwrite');t.objectStore(STORE).put(v,k);t.oncomplete=ok;t.onerror=()=>no(t.error)})}
+function show(which){['register','login'].forEach(id=>$(id).classList.toggle('hidden',id!==which))}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function size(n){return n<1024?n+' B':n<1048576?(n/1024).toFixed(1)+' KB':(n/1048576).toFixed(1)+' MB'}
+function icon(n){let e=n.split('.').pop().toLowerCase();return e==='pdf'?'📕':['doc','docx'].includes(e)?'📘':['ppt','pptx'].includes(e)?'📙':['xls','xlsx'].includes(e)?'📗':['jpg','jpeg','png','gif','webp'].includes(e)?'🖼️':'📄'}
+async function refresh(){items=(await get('items')||[]).filter(x=>x.owner===me.id)}
+function card(x){let act=x.type==='file'?`<button class="soft" onclick="preview('${x.id}')">Preview</button><button class="soft" onclick="download('${x.id}')">Download</button>`:`<button class="soft" onclick="openLink('${x.id}')">Open link</button>`;return `<article class="item"><div class="pic" onclick="${x.type==='file'?`preview('${x.id}')`:`openLink('${x.id}')`}">${x.type==='file'?icon(x.name):'🔗'}</div><h3 onclick="${x.type==='file'?`preview('${x.id}')`:`openLink('${x.id}')`}">${esc(x.name)}</h3><small>${esc(x.folder)} · ${x.type==='file'?size(x.size):'Saved website'}</small><div class="actions">${act}<button class="danger" onclick="remove('${x.id}')">Delete</button></div></article>`}
+function list(id,a){$(id).innerHTML=a.length?a.map(card).join(''):'<div class="empty">No items yet. Tap Add Item to store a file or link.</div>'}
+function render(){refresh().then(()=>{$('total').textContent=items.length;$('filesCount').textContent=items.filter(x=>x.type==='file').length;$('linksCount').textContent=items.filter(x=>x.type==='link').length;list('dashGrid',items.slice().sort((a,b)=>b.created-a.created).slice(0,8));list('fileGrid',items.filter(x=>x.type==='file'));list('linkGrid',items.filter(x=>x.type==='link'));if(me.role==='admin')accountsView()})}
+window.download= id=>{let x=items.find(a=>a.id===id);if(!x)return;let u=URL.createObjectURL(x.blob),a=document.createElement('a');a.href=u;a.download=x.name;a.click();setTimeout(()=>URL.revokeObjectURL(u),1200)};
+window.openLink=id=>{let x=items.find(a=>a.id===id);if(x)window.open(x.url,'_blank','noopener,noreferrer')};
+window.preview=id=>{let x=items.find(a=>a.id===id);if(!x)return;let u=URL.createObjectURL(x.blob),e=x.name.split('.').pop().toLowerCase();$('previewName').textContent=x.name;if(x.blob.type.startsWith('image/'))$('previewBody').innerHTML=`<img src="${u}" style="max-width:100%;max-height:70vh;display:block;margin:auto">`;else if(x.blob.type==='application/pdf'||e==='pdf')$('previewBody').innerHTML=`<iframe src="${u}" style="width:100%;height:70vh;border:0"></iframe>`;else if(['txt','csv','md'].includes(e))x.blob.text().then(t=>$('previewBody').innerHTML=`<pre style="white-space:pre-wrap;overflow-wrap:anywhere">${esc(t.slice(0,100000))}</pre>`);else $('previewBody').innerHTML='<div class="empty">Preview is not supported for this file type. Tap Download to open it in another app.</div>';$('previewModal').dataset.url=u;$('previewModal').classList.add('show')};
+$('closePreview').onclick=()=>{let u=$('previewModal').dataset.url;if(u)URL.revokeObjectURL(u);$('previewModal').classList.remove('show');$('previewBody').innerHTML=''};
+window.remove=async id=>{if(confirm('Delete this item?')){let a=await get('items')||[];await put('items',a.filter(x=>x.id!==id));render()}};
+
+async function accountsView(){
+  let a=await get('accounts')||[];
+  $('accountsTable').innerHTML=a.map(x=>{
+    let isMe = me && me.id === x.id;
+    let statusBadge = x.banned ? `<span class="badge banned">Banned</span>` : `<span class="badge">${x.role}</span>`;
+    let actionBtn = isMe ? `<span class="muted">Current User</span>` : (x.banned ? `<button class="soft" onclick="toggleBan('${x.id}')">Unban</button>` : `<button class="danger" onclick="toggleBan('${x.id}')">Ban</button>`);
+    return `<tr><td>${esc(x.name)}</td><td>${statusBadge}</td><td><code>${esc(x.pass)}</code></td><td>${x.last?new Date(x.last).toLocaleString():'Not signed in'}</td><td>${actionBtn}</td></tr>`;
+  }).join('');
+}
+
+window.toggleBan = async (id) => {
+  let a = await get('accounts')||[];
+  let target = a.find(v => v.id === id);
+  if (!target) return;
+  target.banned = !target.banned;
+  await put('accounts', a);
+  accountsView();
+};
+
+function enter(){ $('auth').classList.add('hidden');$('app').classList.remove('hidden');$('who').textContent=me.name;$('role').textContent=me.role;$('adminTab').classList.toggle('hidden',me.role!=='admin');render()}
+
+$('signIn').onclick=async()=>{
+  let a=await get('accounts')||[],n=$('loginName').value.trim().toLowerCase(),p=$('loginPass').value,x=a.find(v=>v.name.toLowerCase()===n);
+  if(!x||x.pass!==p){$('loginError').textContent='Name or password is incorrect.';return}
+  if(x.banned){
+    $('loginError').textContent='⚠️ Access denied: Your account has been banned by an administrator.';
+    return;
+  }
+  x.last=Date.now();
+  await put('accounts',a.map(v=>v.id===x.id?x:v));
+  me=x;
+  enter();
+};
+
+$('toRegister').onclick=()=>show('register');
+$('backLogin').onclick=()=>show('login');
+
+$('createUser').onclick=async()=>{
+  let n=$('newName').value.trim(),p=$('newPass').value,b=$('newBirth').value,k=$('newKey').value,a=await get('accounts')||[];
+  if(!n||!p||!b||!k){$('regError').textContent='Complete all fields.';return}
+  if(p.length<8){$('regError').textContent='Password must be at least 8 characters.';return}
+  if(a.some(x=>x.name.toLowerCase()===n.toLowerCase())){$('regError').textContent='That name is already registered.';return}
+  
+  // The very first account created automatically becomes the admin
+  let role = a.length === 0 ? 'admin' : 'student';
+  a.push({id:crypto.randomUUID(),name:n,birth:b,role:role,pass:p,key:k,last:null,banned:false});
+  await put('accounts',a);
+  $('regError').textContent='Account created successfully! Please sign in.';
+  show('login');
+};
+
+$('logout').onclick=()=>{me=null;$('app').classList.add('hidden');$('auth').classList.remove('hidden');show('login');$('loginPass').value='';$('loginName').value=''};
+
+document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>{if(b.dataset.page==='admin'&&me.role!=='admin')return;document.querySelectorAll('[data-page]').forEach(x=>x.classList.toggle('active',x===b));['dashboard','files','links','admin'].forEach(p=>$(p).classList.toggle('hidden',p!==b.dataset.page));$('pageTitle').textContent=b.textContent.trim()});
+$('add').onclick=()=>{$('addModal').classList.add('show');$('upload').value='';$('linkTitle').value='';$('url').value=''};
+$('cancel').onclick=()=>$('addModal').classList.remove('show');
+$('type').onchange=()=>{let f=$('type').value==='file';$('fileField').classList.toggle('hidden',!f);$('titleField').classList.toggle('hidden',f);$('urlField').classList.toggle('hidden',f)};
+$('save').onclick=async()=>{let t=$('type').value,x={id:crypto.randomUUID(),owner:me.id,type:t,folder:$('folder').value,created:Date.now()};if(t==='file'){let f=$('upload').files[0];if(!f){alert('Choose a file.');return}Object.assign(x,{name:f.name,size:f.size,blob:f})}else{try{let u=new URL($('url').value.trim());if(!['http:','https:'].includes(u.protocol))throw 0;x.url=u.href;x.name=$('linkTitle').value.trim()||u.href}catch(e){alert('Enter a valid web address starting with http:// or https://');return}}let a=await get('items')||[];a.push(x);try{await put('items',a);$('addModal').classList.remove('show');render()}catch(e){alert('Could not save. Browser storage may be full.')}};
+$('searchDash').oninput=e=>list('dashGrid',items.filter(x=>(x.name+' '+x.folder).toLowerCase().includes(e.target.value.toLowerCase())).slice(0,8));
+$('searchFiles').oninput=e=>list('fileGrid',items.filter(x=>x.type==='file'&&(x.name+' '+x.folder).toLowerCase().includes(e.target.value.toLowerCase())));
+$('searchLinks').oninput=e=>list('linkGrid',items.filter(x=>x.type==='link'&&(x.name+' '+x.folder).toLowerCase().includes(e.target.value.toLowerCase())));
+
+(async()=>{
+  try{
+    db=await openDB();
+    let a=await get('accounts')||[];
+    // If accounts exist, show login screen. If none exist, show registration screen.
+    show(a.length ? 'login' : 'register');
+  }catch(e){
+    $('regError').textContent='Please open this page in an updated browser.';
+    show('register');
+  }
+})();
+</script></body></html>
